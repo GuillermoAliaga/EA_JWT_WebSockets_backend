@@ -9,7 +9,9 @@ import { Schemas, ValidateJoi } from '../middleware/Joi';
 const router = express.Router();
 router.post('/register', ValidateJoi(Schemas.auth.register), controller.register);
 router.post('/login', ValidateJoi(Schemas.auth.login), controller.login);
-router.post('/refresh', ValidateJoi(Schemas.auth.refresh), controller.refresh);
+// EXPLICAR EN EL VÍDEO
+router.post('/refresh',controller.refresh);
+router.post('/logout', controller.logout);
 export = router;
 
 // Documentacion de Swagger de las tres rutas.
@@ -57,13 +59,8 @@ export = router;
  *   post:
  *     tags: [Auth]
  *     summary: Pide un access token nuevo
- *     description: Se usa cuando el access token ha caducado. Se envia el refresh token que devolvio el login.
+ *     description: Se usa cuando el access token ha caducado o al recargar la pagina. No lleva body, el navegador envia la cookie refreshToken automaticamente.
  *     security: []
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema: { $ref: '#/components/schemas/RefreshInput' }
  *     responses:
  *       200:
  *         description: Access token nuevo
@@ -71,5 +68,14 @@ export = router;
  *           application/json:
  *             example: { token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9... }
  *       401: { $ref: '#/components/responses/Unauthorized' }
- *       422: { $ref: '#/components/responses/Unprocessable' }
+ * 
+ * /auth/logout:
+ *   post:
+ *     tags: [Auth]
+ *     summary: Cierra la sesion
+ *     description: Borra la cookie refreshToken e invalida ese refresh token en el servidor. No lleva body ni access token.
+ *     security: []
+ *     responses:
+ *       204:
+ *         description: Sesion cerrada
  */

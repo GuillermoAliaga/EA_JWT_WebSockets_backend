@@ -78,10 +78,6 @@ export const Schemas = {
             password: Joi.string().required().example('seminari7')
         }),
 
-        // Refresh: el refresh token que se recibio al hacer login
-        refresh: Joi.object<{ refreshToken: string }>({
-            refreshToken: Joi.string().required()
-        })
     },
 
     // Validaciones relacionadas con los autores

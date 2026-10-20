@@ -1,6 +1,8 @@
 import { NextFunction, Request, Response } from 'express';
 import BookService from '../services/BookService';
 import type { PaginationQuery } from '../middleware/Joi';
+// EXPLICAR EN EL VÍDEO
+import { getIo } from '../sockets/Chat';
 
 // Función para crear un libro nuevo
 // Cogemos los datos que llegan en el body y los pasamos al servicio
@@ -11,6 +13,9 @@ const createBook = async (req: Request, res: Response, next: NextFunction) => {
         // Si se ha creado correctamente devolvemos el libro creado
         // El codigo 201 indica que se ha creado un recurso nuevo
         res.status(201).json({ book });
+
+        // EXPLICAR EN EL VÍDEO
+        getIo()?.emit('book:created', { _id: String(book._id), title: book.title });
     } catch (error) {
         // Si ocurre algun error lo pasamos al siguiente middleware
         next(error);

@@ -13,6 +13,8 @@ import swaggerUi from 'swagger-ui-express'; // permite mostrar Swagger en el nav
 import swaggerDocument from './config/swagger'; // importa el documento que hemos creado en swagger.ts
 import userRoutes from './routes/Users';
 import { StartChat } from './sockets/Chat';
+// EXPLICAR EN EL VÍDEO
+import cookieParser from 'cookie-parser';
 
 const router = express();
 
@@ -31,6 +33,8 @@ const StartServer = () => {
 
     router.use(express.urlencoded({ extended: true }));
     router.use(express.json());
+    // EXPLICAR EN EL VÍDEO
+    router.use(cookieParser());
 
     /** CORS */
     router.use(Cors);

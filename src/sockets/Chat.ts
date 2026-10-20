@@ -19,6 +19,13 @@ const MAX_TEXT_LENGTH = 2000;
 // Vive en memoria: si el servidor se reinicia, se vuelve a llenar con las reconexiones.
 const onlineUsers = new Map<string, number>();
 
+
+// EXPLICAR EN EL VÍDEO
+let ioInstance: ChatServer | null = null;
+
+// EXPLICAR EN EL VÍDEO
+export const getIo = (): ChatServer | null => ioInstance;
+
 // Comprueba que la sala tiene uno de los nombres del contrato y que este usuario puede entrar:
 //
 //   general                 la sala de todos
@@ -61,6 +68,9 @@ export const StartChat = (server: http.Server) => {
             methods: ['GET', 'POST']
         }
     });
+
+    // EXPLICAR EN EL VÍDEO
+    ioInstance = io;
 
     io.use(VerifySocketToken);
 

@@ -2,10 +2,15 @@ import jwt from 'jsonwebtoken';
 import { config } from '../config/config';
 import User, { AccessTokenPayload, IUser, IUserModel, RefreshTokenPayload } from '../models/User';
 import { verifyPassword } from '../utils/password';
+import crypto from 'crypto';
 
 // Firma el access token: el que se envia en cada peticion en la cabecera Authorization.
 // Dura poco (JWT_EXPIRES_IN, 15 minutos por defecto) para que, si alguien lo roba, le sirva poco tiempo.
 // jwt.sign añade solo el claim exp a partir de expiresIn.
+
+const hashToken = (token: string) => crypto.createHash('sha256').update(token).digest('hex');
+
+
 export const signAccessToken = (user: IUserModel) => {
     const payload: AccessTokenPayload = { sub: String(user._id), role: user.role };
 
@@ -40,9 +45,13 @@ export const login = async (email: string, password: string) => {
     if (!user || !(await verifyPassword(password, user.password))) {
         return null;
     }
+    // EXPLICAR EN EL VÍDEO
+    const refreshToken = signRefreshToken(user);
+    await User.updateOne({ _id: user._id }, { refreshTokenHash: hashToken(refreshToken) });
 
     return {
         token: signAccessToken(user),
+        // EXPLICAR EN EL VÍDEO
         refreshToken: signRefreshToken(user),
         // toJSON() quita la contraseña del usuario antes de devolverlo
         user: user.toJSON()
@@ -56,13 +65,20 @@ export const refresh = async (refreshToken: string) => {
     const payload = jwt.verify(refreshToken, config.jwt.refreshSecret) as RefreshTokenPayload;
 
     // Volvemos a leer el usuario de la base de datos: asi el token nuevo lleva su rol actual
-    const user = await User.findById(payload.sub);
-
-    if (!user) {
+    const user = await User.findById(payload.sub).select('+refreshTokenHash');
+    // EXPLICAR EN EL VÍDEO
+    if (!user || user.refreshTokenHash !== hashToken(refreshToken)) {
         return null;
     }
 
     return { token: signAccessToken(user) };
 };
 
-export default { register, login, refresh };
+// EXPLICAR EN EL VÍDEO
+export const logout = async (refreshToken: string) => {
+    const payload = jwt.verify(refreshToken, config.jwt.refreshSecret) as RefreshTokenPayload;
+
+    await User.updateOne({ _id: payload.sub }, { refreshTokenHash: null });
+};
+
+export default { register, login, refresh, logout };

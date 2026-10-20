@@ -8,5 +8,7 @@ import { config } from '../config/config';
 export const Cors = cors({
     origin: config.cors.origin,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    // EXPLICAR EN EL VÍDEO
+    credentials: true,
     allowedHeaders: ['Origin', 'X-Requested-With', 'Content-Type', 'Accept', 'Authorization']
 });

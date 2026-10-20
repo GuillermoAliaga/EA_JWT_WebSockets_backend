@@ -18,6 +18,8 @@ export interface IUser {
     password: string;
 
     role: UserRole;
+    // EXPLICAR EN EL VÍDEO
+    refreshTokenHash?: string | null;
 }
 
 // ---- Interfaces de la autenticacion con JWT ----
@@ -61,7 +63,9 @@ const UserSchema: Schema = new Schema(
         password: { type: String, required: true, select: false },
 
         // Si no se indica, un usuario nuevo es user. Los admin se crean con el seed
-        role: { type: String, enum: USER_ROLES, default: 'user' }
+        role: { type: String, enum: USER_ROLES, default: 'user' },
+        // EXPLICAR EN EL VÍDEO
+        refreshTokenHash: { type: String, select: false, default: null }
     },
     {
         // Mongoose crea automaticamente las fechas de creacion y actualizacion
@@ -74,7 +78,8 @@ const UserSchema: Schema = new Schema(
         toJSON: {
             transform: (document, result: Record<string, unknown>) => {
                 delete result.password;
-
+                // EXPLICAR EN EL VÍDEO
+                delete result.refreshTokenHash;
                 return result;
             }
         }

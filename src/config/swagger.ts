@@ -13,7 +13,6 @@ const { swagger: authorInput } = j2s(Schemas.author.create);
 const { swagger: bookInput } = j2s(Schemas.book.create);
 const { swagger: registerInput } = j2s(Schemas.auth.register);
 const { swagger: loginInput } = j2s(Schemas.auth.login);
-const { swagger: refreshInput } = j2s(Schemas.auth.refresh);
 
 // Lo que devuelve la API no es igual a lo que se envía: lleva el _id y las fechas que
 // pone MongoDB, el usuario nunca devuelve la contraseña, y el libro trae sus autores enteros.
@@ -131,7 +130,6 @@ const swaggerDocument = swaggerJsdoc({
             schemas: {
                 RegisterInput: registerInput,
                 LoginInput: loginInput,
-                RefreshInput: refreshInput,
                 User: userSchema,
                 AuthorInput: authorInput,
                 BookInput: bookInput,
@@ -139,13 +137,13 @@ const swaggerDocument = swaggerJsdoc({
                 Book: bookSchema
             },
             responses: {
+                // EXPLICAR EN EL VÍDEO
                 LoginOk: okResponse(
-                    'Sesión iniciada: el access token, el refresh token y el usuario',
+                    'Sesión iniciada: el access token y el usuario. El refresh token ahora se devuelve en una cookie.',
                     {
                         type: 'object',
                         properties: {
                             token: { type: 'string' },
-                            refreshToken: { type: 'string' },
                             user: userSchema
                         }
                     },

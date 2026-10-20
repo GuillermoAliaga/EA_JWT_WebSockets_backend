@@ -64,6 +64,12 @@ export interface ChatError {
     message: string;
 }
 
+// EXPLICAR EN EL VÍDEO
+export interface BookCreatedPayload {
+    _id: string;
+    title: string;
+}
+
 // Eventos que el cliente puede enviar al servidor (socket.emit en el frontend, socket.on aquí).
 export interface ClientToServerEvents {
     'chat:join': (payload: ChatJoinPayload) => void;
@@ -77,6 +83,8 @@ export interface ServerToClientEvents {
     'chat:error': (error: ChatError) => void;
     // Lista de ids de los usuarios con el chat abierto; se envía a todos cada vez que alguien entra o sale
     'users:online': (userIds: string[]) => void;
+    // EXPLICAR EN EL VÍDEO
+    'book:created': (book: BookCreatedPayload) => void;
 }
 
 // Lo que el middleware SocketAuth guarda en cada conexión (socket.data).
